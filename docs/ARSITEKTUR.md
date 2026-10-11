@@ -1,6 +1,6 @@
 # Arsitektur TripReady
 
-Aplikasi *client-side* murni, tanpa database. Karena itu **tidak ada ERD**; sebagai gantinya dipakai diagram alur data di bawah.
+Aplikasi *client-side* murni, tanpa database. Karena itu tidak ada ERD fisik; yang ada adalah [ERD konseptual](ERD.md) dan diagram alur data di bawah.
 
 ## Lapisan kode (`js/`)
 | Lapisan | Tanggung jawab | Berkas |
@@ -43,9 +43,9 @@ sequenceDiagram
 `assess()` menjumlahkan poin dari peluang hujan, jenis cuaca, panas, angin, UV, AQI, jam buka, dan tanggal merah, dibobot oleh aktivitas dan transportasi. Skor ≥2,5 = Sedang, ≥5 = Tinggi. Ini skor buatan aplikasi, bukan data API.
 
 ## Keputusan desain
-- **Tanpa backend:** privasi dan kemudahan deploy; konsekuensinya notifikasi saat web tertutup memakai alarm kalender.
+- **Backend minimal & opsional:** aplikasi utama tanpa backend (privasi, mudah deploy). Satu Cloudflare Worker (`worker/worker.mjs`) hanya menyimpan jadwal pengingat dan mengirim Web Push; tanpa Worker, pengingat memakai timer halaman atau alarm kalender.
 - **Tanpa bundler:** skrip klasik berurutan agar sederhana.
-- **Tile OpenStreetMap:** sesuai ketentuan layanan.
+- **Tile Esri World Street Map:** boleh dipakai dengan atribusi; tile OSM terbukti diblokir (403) tanpa Referer.
 
 ## Utang teknis
 State global `S` dipakai bersama; controller masih menulis DOM langsung di beberapa tempat. Langkah lanjut: modul ES, state terpusat, dan unit test untuk `assess()`.

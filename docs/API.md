@@ -10,7 +10,9 @@ Semua API gratis dan tanpa API key.
 | OSRM | Rute & durasi (mobil/sepeda/jalan kaki) | `GET router.project-osrm.org/route/v1/driving/{lon,lat;lon,lat}?overview=full&geometries=geojson` | `fetchRoute` |
 | Overpass | Tag `opening_hours` OSM | `GET overpass-api.de/api/interpreter?data=...` | `fetchHours` |
 | Nager.Date | Hari libur nasional | `GET date.nager.at/api/v3/PublicHolidays/{tahun}/{negara}` | `fetchHolidays` |
-| OpenStreetMap Tiles | Peta dasar (Leaflet) | `tile.openstreetmap.org/{z}/{x}/{y}.png` | `views/map-view.js` |
+| Esri World Street Map | Peta dasar (Leaflet) | `server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}` | `views/map-view.js` |
+| Worker TripReady (milik sendiri) | Simpan/hapus jadwal Web Push | `POST /subscribe {subscription, fireAt}` · `POST /unsubscribe {endpoint}` | `services/notification.js` (`schedulePush`) |
+| Layanan Web Push peramban (FCM dll.) | Mengantar push ke perangkat | `POST <endpoint langganan>` dengan header VAPID | `worker/worker.mjs` (`sendDue`) |
 
 **Penanganan galat:** kegagalan jaringan/HTTP dilempar sebagai `Error` berpesan Indonesia dan ditampilkan lewat `setStatus()` + `toast()`. API opsional (udara, libur, jam buka) gagal secara senyap sehingga hasil tetap tampil.
 **Batasan:** Nominatim dan OSRM publik punya rate limit; untuk produksi gunakan server sendiri.

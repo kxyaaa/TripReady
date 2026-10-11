@@ -17,14 +17,14 @@
 | FR-08 | Sistem memberi verdict (layak / perlu antisipasi / kurang disarankan) dan Plan A/B/C |
 | FR-09 | Sistem membuat checklist barang untuk aktivitas wisata |
 | FR-10 | Pengguna dapat mengekspor rencana ke kalender (.ics, Google Calendar) dengan alarm |
-| FR-11 | Pengguna dapat mengaktifkan pengingat notifikasi peramban |
+| FR-11 | Pengguna dapat mengaktifkan pengingat notifikasi yang tetap muncul saat web ditutup (Web Push) |
 | FR-12 | Sistem menjelaskan asal setiap angka (panel "Asal angka") |
 
 ## 3. Kebutuhan Non-Fungsional
 | ID | Kebutuhan |
 |---|---|
 | NFR-01 | Responsif pada layar ponsel dan desktop |
-| NFR-02 | Tanpa akun dan tanpa database; data pribadi tidak dikirim ke server milik aplikasi |
+| NFR-02 | Tanpa akun dan tanpa database; satu-satunya data yang dikirim ke server milik aplikasi adalah alamat langganan push dan waktu pengingat, hanya jika pengguna mengaktifkan notifikasi |
 | NFR-03 | Input/output ke HTML di-escape untuk mencegah XSS |
 | NFR-04 | Pesan galat yang jelas bila API tidak tersedia |
 | NFR-05 | Ketergantungan hanya pada API publik gratis tanpa API key |
