@@ -1,7 +1,7 @@
 "use strict";
 /* TripReady — Ready Before You Go
    API publik: Nominatim (lokasi), Open-Meteo (cuaca + kualitas udara), OSRM (rute),
-   Nager.Date (hari libur nasional), Leaflet + tile OpenStreetMap. Tanpa database. */
+   Nager.Date (hari libur nasional), Leaflet + tile Esri World Street Map. Tanpa database. */
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -15,7 +15,9 @@ const rad = (x) => (x * Math.PI) / 180;
 const haversine = (a, b) => { const dLa = rad(b[0] - a[0]), dLo = rad(b[1] - a[1]); const q = Math.sin(dLa / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLo / 2) ** 2; return 6371 * 2 * Math.atan2(Math.sqrt(q), Math.sqrt(1 - q)); };
 const shortName = (p) => p.name || p.display_name.split(",")[0];
 
-const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png", TILE_ATTR = "© OpenStreetMap contributors";
+const TILE_URL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", TILE_ATTR = "Tiles © Esri, data © OpenStreetMap contributors";
+/* Web Push (opsional): isi setelah Worker dideploy, lihat docs/PUSH_SETUP.md. Kosong = fitur nonaktif. */
+const PUSH_API = "https://tripready-push.chartfancyy.workers.dev", VAPID_PUBLIC = "BGTypKZaNgE3xJtlWxNfGqzZFwFqbMsdnb3rq-3Lfc6xRpGARp1q2eS8CHLNOQkoB0FAZa7IsvUrOLvUSmFT2hI";
 const S = { dest: null, destQuery: "", origin: null, originQuery: "", map: null, layer: null, busy: false, unread: 0, reminder: null, timer: null, bias: null };
 
 const WX = {

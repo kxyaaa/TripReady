@@ -19,7 +19,7 @@ function clearReminder(fired) {
   clearTimeout(S.timer); S.reminder = null;
   try { localStorage.removeItem("tr_reminder"); } catch { }
   $("cancelReminder").classList.add("hidden");
-  if (!fired) toast("Pengingat dibatalkan.");
+  if (!fired) { toast("Pengingat dibatalkan."); if (pushReady()) cancelPush(); }
 }
 $("cancelReminder").addEventListener("click", () => { clearReminder(false); $("reminderText").textContent = "Pengingat dibatalkan. Buat atau ulangi rencana untuk mengatur yang baru."; $("enableReminder").classList.remove("hidden"); $("leadTime").classList.remove("hidden"); });
 
@@ -48,7 +48,13 @@ function setupReminder(plan) {
     if (!armTimer(rem)) { toast("Waktu pengingat sudah lewat."); return; }
     S.reminder = rem;
     try { localStorage.setItem("tr_reminder", JSON.stringify(rem)); } catch { }
-    txt.textContent = `Pengingat aktif: ${LEADS.find(([m]) => m === lead)[1]} (${fmtDT(plan.ts)}). Biarkan halaman ini tetap terbuka, atau pasang alarm kalender agar tetap bunyi saat web ditutup.`;
+    let pushed = false;
+    if (pushReady()) {
+      try { await schedulePush(rem.ts - lead * 60000); pushed = true; }
+      catch (e) { toast("Notifikasi saat web ditutup gagal diaktifkan: " + e.message); }
+    }
+    const tail = pushed ? "Notifikasi akan muncul walau web ditutup." : "Biarkan halaman ini tetap terbuka, atau pasang alarm kalender agar tetap bunyi saat web ditutup.";
+    txt.textContent = `Pengingat aktif: ${LEADS.find(([m]) => m === lead)[1]} (${fmtDT(plan.ts)}). ${tail}`;
     btn.textContent = "✓ Notifikasi aktif"; btn.disabled = true; $("cancelReminder").classList.remove("hidden");
     toast("Pengingat berhasil dijadwalkan.");
   };
