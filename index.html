@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,267 +8,408 @@
   <title>TripReady — Ready Before You Go</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&family=Nunito:wght@700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<!-- Maskot Mimi (dipakai ulang lewat <use>) -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="mimi" viewBox="0 0 120 100">
-    <g fill="#fff">
-      <circle cx="38" cy="60" r="24"/><circle cx="62" cy="44" r="28"/><circle cx="88" cy="60" r="22"/>
-      <rect x="30" y="58" width="72" height="26" rx="13"/>
-    </g>
-    <circle cx="50" cy="62" r="3.4" fill="#4a4f86"/><circle cx="74" cy="62" r="3.4" fill="#4a4f86"/>
-    <ellipse cx="42" cy="70" rx="5" ry="3" fill="#ffc2d1"/><ellipse cx="82" cy="70" rx="5" ry="3" fill="#ffc2d1"/>
-    <path d="M56 70q6 6 12 0" fill="none" stroke="#4a4f86" stroke-width="2.4" stroke-linecap="round"/>
-  </symbol>
-</svg>
+  <!-- Maskot Mimi (dipakai ulang lewat <use>) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="mimi" viewBox="0 0 120 100">
+      <g fill="#fff">
+        <circle cx="38" cy="60" r="24" />
+        <circle cx="62" cy="44" r="28" />
+        <circle cx="88" cy="60" r="22" />
+        <rect x="30" y="58" width="72" height="26" rx="13" />
+      </g>
+      <circle cx="50" cy="62" r="3.4" fill="#4a4f86" />
+      <circle cx="74" cy="62" r="3.4" fill="#4a4f86" />
+      <ellipse cx="42" cy="70" rx="5" ry="3" fill="#ffc2d1" />
+      <ellipse cx="82" cy="70" rx="5" ry="3" fill="#ffc2d1" />
+      <path d="M56 70q6 6 12 0" fill="none" stroke="#4a4f86" stroke-width="2.4" stroke-linecap="round" />
+    </symbol>
+  </svg>
 
-<div class="app-shell">
-  <aside class="sidebar" id="sidebar">
-    <a class="brand" href="#beranda" aria-label="TripReady beranda">
-      <svg class="brand-mark" viewBox="0 0 120 100"><use href="#mimi"/></svg>
-      <span><b>TripReady</b></span>
-    </a>
-    <nav class="nav" aria-label="Menu utama">
-      <a class="nav-item active" href="#beranda" data-target="beranda"><i>⌂</i><span>Beranda</span></a>
-      <a class="nav-item" href="#rencana" data-target="rencana"><i>▦</i><span>Rencanakan Perjalanan</span></a>
-      <a class="nav-item" href="#recommendations" data-target="recommendations"><i>✧</i><span>Hasil Rekomendasi</span></a>
-      <a class="nav-item" href="#peta" data-target="peta"><i>⌖</i><span>Peta &amp; Rute</span></a>
-      <a class="nav-item" href="#cuaca" data-target="cuaca"><i>☁</i><span>Cuaca per Jam</span></a>
-      <a class="nav-item" href="#checklist" data-target="checklist"><i>☑</i><span>Checklist Wisata</span></a>
-      <a class="nav-item" href="#pengingat" data-target="pengingat"><i>♧</i><span>Pengingat</span></a>
-    </nav>
-    <div class="sidebar-note">
-      <div class="bubble" id="sideBubble">Mau ke mana hari ini? Yuk cek dulu kondisinya bareng Mimi!</div>
-      <svg class="side-mimi" viewBox="0 0 120 100"><use href="#mimi"/></svg>
-    </div>
-    <div class="sidebar-foot">Data dari API publik<br><span>Cuaca · Peta · Kalender</span></div>
-  </aside>
-  <div class="scrim" id="scrim"></div>
-
-  <main class="main-content" id="main">
-    <header class="topbar">
-      <button class="mobile-menu" id="mobileMenu" aria-label="Buka menu">☰</button>
-      <label class="global-search"><span aria-hidden="true">⌕</span>
-        <input id="quickSearch" placeholder="Cari tujuan lalu tekan Enter…" aria-label="Cari tujuan">
-      </label>
-      <div class="top-actions">
-        <span class="live-dot"></span><span id="clock">…</span>
-        <button class="bell" id="bellBtn" aria-label="Lihat notifikasi">🔔<em id="bellCount" class="hidden">0</em></button>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#beranda" aria-label="TripReady beranda">
+        <svg class="brand-mark" viewBox="0 0 120 100">
+          <use href="#mimi" />
+        </svg>
+        <span><b>TripReady</b></span>
+      </a>
+      <nav class="nav" aria-label="Menu utama">
+        <a class="nav-item active" href="#beranda" data-target="beranda"><i>⌂</i><span>Beranda</span></a>
+        <a class="nav-item" href="#rencana" data-target="rencana"><i>▦</i><span>Rencanakan Perjalanan</span></a>
+        <a class="nav-item" href="#recommendations" data-target="recommendations"><i>✧</i><span>Hasil
+            Rekomendasi</span></a>
+        <a class="nav-item" href="#peta" data-target="peta"><i>⌖</i><span>Peta &amp; Rute</span></a>
+        <a class="nav-item" href="#cuaca" data-target="cuaca"><i>☁</i><span>Cuaca per Jam</span></a>
+        <a class="nav-item" href="#checklist" data-target="checklist"><i>☑</i><span>Checklist Wisata</span></a>
+        <a class="nav-item" href="#pengingat" data-target="pengingat"><i>♧</i><span>Pengingat</span></a>
+      </nav>
+      <div class="sidebar-note">
+        <div class="bubble" id="sideBubble">Mau ke mana hari ini? Yuk cek dulu kondisinya bareng Mimi!</div>
+        <svg class="side-mimi" viewBox="0 0 120 100">
+          <use href="#mimi" />
+        </svg>
       </div>
-    </header>
+      <div class="sidebar-foot">Data dari API publik<br><span>Cuaca · Peta · Kalender</span></div>
+    </aside>
+    <div class="scrim" id="scrim"></div>
 
-    <div class="pages">
-<div class="page active" id="beranda"><section class="welcome-banner">
-      <div>
-        <h1 id="greeting">Hai! ☀️</h1>
-        <p class="slogan">READYY BEFORE YOU GOO!!!</p><p class="lead">Sudah siap berangkat hari ini?</p>
-        <p>Cek cuaca, jam buka, dan waktu terbaik sebelum kamu pergi, ke mana pun tujuanmu di dunia.</p><a class="primary-btn cta" href="#rencana">Mulai Rencanakan <span>→</span></a>
-      </div>
-      <div class="banner-art" aria-hidden="true"><svg viewBox="0 0 120 100"><use href="#mimi"/></svg></div>
-    </section>
-
-    <div class="page-grid"><section class="panel" id="notifPanel">
-          <div class="panel-heading"><div><span class="heading-icon">🔔</span><h2>Catatan Terbaru</h2></div></div>
-          <ul class="notif-list" id="notifList"><li class="notif-empty">Belum ada catatan. Buat rencana dulu.</li></ul>
-        </section>
-
-        <section class="panel mimi-panel">
-          <div class="bubble" id="mimiSays">Halo! Aku Mimi. Isi rencanamu, nanti aku kasih tahu kapan waktu terbaik berangkat.</div>
-          <svg viewBox="0 0 120 100" class="mimi-big"><use href="#mimi"/></svg>
-        </section>
-
-        </div><section class="panel api-panel">
-          <b>Privasi &amp; sumber data</b>
-          <p>Tanpa database dan tanpa akun. Semua data diambil langsung dari API publik saat kamu membuat rencana.</p>
-          <div class="source-tags"><span>Open-Meteo</span><span>Nominatim</span><span>Photon</span><span>Esri</span><span>OSRM</span><span>Overpass</span><span>Nager.Date</span><span>Leaflet</span></div>
-        </section>
-      </div>
-<div class="page" id="rencana"><section class="panel">
-          <div class="panel-heading"><div><span class="heading-icon">▣</span><h2>Rencanakan Perjalananmu</h2></div><span class="pill"><span class="live-dot"></span> Data langsung</span></div>
-          <form id="tripForm" novalidate>
-            <div class="form-grid">
-              <div class="field">
-                <label for="origin">Lokasi awal <em>(opsional, untuk estimasi rute)</em></label>
-                <div class="ac-wrap">
-                  <div class="input-wrap"><span class="field-icon green">●</span>
-                    <input id="origin" placeholder="Ketik alamat/tempat, atau pakai lokasi saya" autocomplete="off">
-                    <button type="button" id="geoBtn" class="inline-btn" title="Pakai lokasi perangkat">📍 Lokasi saya</button>
-                  </div>
-                  <ul class="suggest hidden" id="originSuggest" role="listbox"></ul>
-                </div>
-                <button type="button" id="pickBtn" class="link-inline">🗺️ Atau pilih titik di peta</button>
-              </div>
-              <div class="field">
-                <label for="destination">Tujuan</label>
-                <div class="input-wrap"><span class="field-icon purple">⌖</span>
-                  <input id="destination" required placeholder="Ketik nama tempat, mis. Momoyo, SMA 1, Danau Toba" autocomplete="off">
-                  <button type="button" id="suggestBtn" class="inline-btn">Cari</button>
-                </div>
-                <ul class="suggest hidden" id="suggestList" role="listbox"></ul>
-              </div>
-              <div class="field"><label for="activity">Aktivitas</label>
-                <select id="activity">
-                  <option value="urus">Mengurus keperluan / layanan</option>
-                  <option value="wisata">Wisata / jalan-jalan</option>
-                  <option value="jogging">Jogging / olahraga luar ruang</option>
-                  <option value="kuliner">Kuliner / nongkrong</option>
-                  <option value="belanja">Belanja</option>
-                  <option value="kampus">Kuliah / bekerja</option>
-                </select>
-              </div>
-              <div class="field"><label for="transport">Transportasi</label>
-                <select id="transport">
-                  <option value="motor">Motor</option>
-                  <option value="car">Mobil</option>
-                  <option value="bus">Bus</option>
-                  <option value="train">Kereta api</option>
-                  <option value="plane">Pesawat</option>
-                  <option value="ship">Kapal / ferry</option>
-                  <option value="bike">Sepeda</option>
-                  <option value="walk">Jalan kaki</option>
-                </select>
-              </div>
-              <div class="field"><label for="tripDate">Tanggal berangkat</label><input id="tripDate" type="date" required></div>
-              <div class="field"><label for="tripTime">Jam berangkat <em>(waktu setempat lokasi awal)</em></label><input id="tripTime" type="time" value="08:00" required></div>
-              <div class="field field-wide hidden" id="durationField"><label for="duration">Lama wisata</label>
-                <select id="duration">
-                  <option value="1">Pulang hari (tanpa menginap)</option>
-                  <option value="2">Menginap 1 malam</option>
-                  <option value="3">Menginap 2 malam</option>
-                  <option value="4">Menginap 3 malam</option>
-                  <option value="6">Menginap 5 malam</option>
-                  <option value="8">Menginap 7 malam</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-footer">
-              <p>☂ Rekomendasi menyesuaikan aktivitas, cuaca, dan jam buka tujuan.</p>
-              <button class="primary-btn" id="submitBtn" type="submit">Lihat Rekomendasi <span>→</span></button>
-            </div>
-            <p class="status-line" id="formStatus" role="status" aria-live="polite"></p>
-          </form>
-        </section>
-
+    <main class="main-content" id="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Buka menu">☰</button>
+        <label class="global-search"><span aria-hidden="true">⌕</span>
+          <input id="quickSearch" placeholder="Cari tujuan lalu tekan Enter…" aria-label="Cari tujuan">
+        </label>
+        <div class="top-actions">
+          <span class="live-dot"></span><span id="clock">…</span>
+          <button class="bell" id="bellBtn" aria-label="Lihat notifikasi">🔔<em id="bellCount"
+              class="hidden">0</em></button>
         </div>
-<div class="page" id="recommendations"><section class="panel">
-          <div class="panel-heading"><div><span class="heading-icon">✧</span><h2>Hasil Rekomendasi</h2></div><span class="pill">Cuaca · jam buka · rute</span></div>
-          <div class="empty-state" id="emptyState">
-            <svg viewBox="0 0 120 100"><use href="#mimi"/></svg>
-            <b>Rencana perjalananmu dimulai di sini</b>
-            <p>Isi tujuan, aktivitas, tanggal, dan jam berangkat. Mimi akan menggabungkan cuaca, kalender, jam buka, dan rute jadi satu saran.</p>
-          </div>
+      </header>
 
-          <div id="results" class="hidden">
-            <div class="verdict" id="verdict">
-              <div class="verdict-icon" id="verdictIcon">✅</div>
-              <div><span class="verdict-label" id="verdictLabel">HASIL</span><h3 id="verdictTitle">…</h3><p id="verdictText"></p></div>
+      <div class="pages">
+        <div class="page active" id="beranda">
+          <section class="welcome-banner">
+            <div>
+              <h1 id="greeting">Hai! ☀️</h1>
+              <p class="slogan">READYY BEFORE YOU GOO!!!</p>
+              <p class="lead">Sudah siap berangkat hari ini?</p>
+              <p>Cek cuaca, jam buka, dan waktu terbaik sebelum kamu pergi, ke mana pun tujuanmu di dunia.</p><a
+                class="primary-btn cta" href="#rencana">Mulai Rencanakan <span>→</span></a>
             </div>
-
-            <div class="stats-grid">
-              <article class="stat-card"><small>Cuaca saat kegiatan</small><strong id="weatherValue">—</strong><span id="weatherDetail" class="stat-detail">—</span></article>
-              <article class="stat-card"><small>Suhu</small><strong id="tempValue">—</strong><span id="rainDetail" class="stat-detail">—</span></article>
-              <article class="stat-card"><small>Jam operasional</small><strong id="hoursValue">—</strong><span id="hoursDetail" class="stat-detail">—</span><a id="hoursLink" class="stat-link hidden" target="_blank" rel="noopener">Cek di Google Maps ↗</a></article>
-              <article class="stat-card"><small>Estimasi perjalanan</small><strong id="etaValue">—</strong><span id="etaDetail" class="stat-detail">—</span></article>
-            </div>
-
-            <div class="plans-head"><h3>Perbandingan waktu berangkat</h3><span class="tiny-tag" id="plansNote">Pilihan terbaik di hari yang sama</span></div>
-            <div class="plans" id="plans"></div>
-
-            <div class="info-row">
-              <div class="info-box"><div class="subhead"><h3>Informasi tujuan</h3><a id="mapLink" target="_blank" rel="noopener">Buka di OpenStreetMap ↗</a></div>
-                <p id="placeAddress" class="address-text">—</p><p id="placeNote" class="muted-text"></p></div>
-              <div class="info-box"><div class="subhead"><h3>Kalender</h3><span class="tiny-tag" id="calTag">—</span></div>
-                <p id="calText" class="muted-text">—</p>
-                <div class="cal-actions"><button type="button" class="secondary-btn" id="icsBtn">⬇ Simpan ke kalender (.ics)</button><a class="secondary-btn" id="gcalBtn" target="_blank" rel="noopener">＋ Google Calendar</a></div></div>
-            </div>
-          </div>
-        </section>
-        <div class="page-next"><a href="#peta" aria-label="Lanjut ke Peta &amp; Rute" title="Lanjut ke Peta &amp; Rute">→</a></div>
-
-        </div>
-<div class="page" id="peta"><section class="panel map-panel">
-            <div class="panel-heading"><div><span class="heading-icon">⌖</span><h2>Peta Rute</h2></div><span class="pill">OpenStreetMap</span></div>
-            <div id="map" class="map" aria-label="Peta lokasi tujuan dan rute"></div>
-            <div class="legend"><span><i class="lg lg-route"></i>Rute</span><span>🟢 Awal</span><span>📍 Tujuan</span></div>
-            <p class="map-caption" id="mapCaption">Cari tujuan untuk melihat lokasinya di peta. Isi lokasi awal untuk menampilkan rute.</p>
+            <div class="banner-art" aria-hidden="true"><svg viewBox="0 0 120 100">
+                <use href="#mimi" />
+              </svg></div>
           </section>
-          <div class="page-next"><a href="#cuaca" aria-label="Lanjut ke Cuaca per Jam" title="Lanjut ke Cuaca per Jam">→</a></div>
+
+          <div class="page-grid">
+            <section class="panel" id="notifPanel">
+              <div class="panel-heading">
+                <div><span class="heading-icon">🔔</span>
+                  <h2>Catatan Terbaru</h2>
+                </div>
+              </div>
+              <ul class="notif-list" id="notifList">
+                <li class="notif-empty">Belum ada catatan. Buat rencana dulu.</li>
+              </ul>
+            </section>
+
+            <section class="panel mimi-panel">
+              <div class="bubble" id="mimiSays">Halo! Aku Mimi. Isi rencanamu, nanti aku kasih tahu kapan waktu terbaik
+                berangkat.</div>
+              <svg viewBox="0 0 120 100" class="mimi-big">
+                <use href="#mimi" />
+              </svg>
+            </section>
 
           </div>
-<div class="page" id="cuaca"><div class="page-grid"><section class="panel today-panel">
-          <div class="today-top"><span id="todayDate">Hari ini</span><span>⌖ <b id="currentCity">Tujuan belum dipilih</b></span></div>
-          <div class="today-weather"><div><strong id="currentTemp">—°</strong><p id="currentDescription">Cuaca sekarang di tujuan</p></div><span id="currentWeatherIcon" class="big-weather">🌤️</span></div>
-        </section>
-
-        <section class="panel">
-            <div class="panel-heading"><div><span class="heading-icon">☁</span><h2>Cuaca di Tujuan</h2></div><a class="mini-link" id="wxLink" href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo ↗</a></div>
-            <div class="hourly" id="hourly"><p class="muted-text">Prakiraan per jam muncul setelah kamu membuat rencana.</p></div>
-            <div class="metrics">
-              <div><small>Peluang hujan</small><b id="rainChance">—</b></div>
-              <div><small>Kelembapan</small><b id="humidity">—</b></div>
-              <div><small>Indeks UV</small><b id="uv">—</b><em id="uvLabel"></em></div>
-              <div><small>Angin</small><b id="wind">—</b></div>
-              <div><small>Kualitas udara</small><b id="aqi">—</b><em id="aqiLabel"></em></div>
+          <section class="panel api-panel">
+            <b>Privasi &amp; sumber data</b>
+            <p>Tanpa database dan tanpa akun. Semua data diambil langsung dari API publik saat kamu membuat rencana.</p>
+            <div class="source-tags">
+              <span>Open-Meteo</span><span>Nominatim</span><span>Photon</span><span>OSRM</span><span>Overpass</span><span>Nager.Date</span><span>Leaflet</span>
             </div>
-          <small class="source-note">Ketuk tombol <b>ⓘ Asal angka</b> di pojok kanan bawah untuk melihat dari mana setiap angka dan persentase berasal.</small></section></div><section class="panel warn-panel" id="warnPanel">
-          <div class="panel-heading"><div><span class="heading-icon warn">⚠</span><h2>Peringatan Cuaca</h2></div></div>
-          <p id="warnText" class="muted-text">Belum ada data.</p>
-        </section>
-        <div class="page-next"><a href="#checklist" aria-label="Lanjut ke Checklist Wisata" title="Lanjut ke Checklist Wisata">→</a></div>
+          </section>
+        </div>
+        <div class="page" id="rencana">
+          <section class="panel">
+            <div class="panel-heading">
+              <div><span class="heading-icon">▣</span>
+                <h2>Rencanakan Perjalananmu</h2>
+              </div><span class="pill"><span class="live-dot"></span> Data langsung</span>
+            </div>
+            <form id="tripForm" novalidate>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="origin">Lokasi awal <em>(opsional, untuk estimasi rute)</em></label>
+                  <div class="ac-wrap">
+                    <div class="input-wrap"><span class="field-icon green">●</span>
+                      <input id="origin" placeholder="Ketik alamat/tempat, atau pakai lokasi saya" autocomplete="off">
+                      <button type="button" id="geoBtn" class="inline-btn" title="Pakai lokasi perangkat">📍 Lokasi
+                        saya</button>
+                    </div>
+                    <ul class="suggest hidden" id="originSuggest" role="listbox"></ul>
+                  </div>
+                  <button type="button" id="pickBtn" class="link-inline">🗺️ Atau pilih titik di peta</button>
+                </div>
+                <div class="field">
+                  <label for="destination">Tujuan</label>
+                  <div class="input-wrap"><span class="field-icon purple">⌖</span>
+                    <input id="destination" required placeholder="Ketik nama tempat, mis. Momoyo, SMA 1, Danau Toba"
+                      autocomplete="off">
+                    <button type="button" id="suggestBtn" class="inline-btn">Cari</button>
+                  </div>
+                  <ul class="suggest hidden" id="suggestList" role="listbox"></ul>
+                </div>
+                <div class="field"><label for="activity">Aktivitas</label>
+                  <select id="activity">
+                    <option value="urus">Mengurus keperluan / layanan</option>
+                    <option value="wisata">Wisata / jalan-jalan</option>
+                    <option value="jogging">Jogging / olahraga luar ruang</option>
+                    <option value="kuliner">Kuliner / nongkrong</option>
+                    <option value="belanja">Belanja</option>
+                    <option value="kampus">Kuliah / bekerja</option>
+                  </select>
+                </div>
+                <div class="field"><label for="transport">Transportasi</label>
+                  <select id="transport">
+                    <option value="motor">Motor</option>
+                    <option value="car">Mobil</option>
+                    <option value="bus">Bus</option>
+                    <option value="train">Kereta api</option>
+                    <option value="plane">Pesawat</option>
+                    <option value="ship">Kapal / ferry</option>
+                    <option value="bike">Sepeda</option>
+                    <option value="walk">Jalan kaki</option>
+                  </select>
+                </div>
+                <div class="field"><label for="tripDate">Tanggal berangkat</label><input id="tripDate" type="date"
+                    required></div>
+                <div class="field"><label for="tripTime">Jam berangkat <em>(waktu setempat lokasi
+                      awal)</em></label><input id="tripTime" type="time" value="08:00" required></div>
+                <div class="field field-wide hidden" id="durationField"><label for="duration">Lama wisata</label>
+                  <select id="duration">
+                    <option value="1">Pulang hari (tanpa menginap)</option>
+                    <option value="2">Menginap 1 malam</option>
+                    <option value="3">Menginap 2 malam</option>
+                    <option value="4">Menginap 3 malam</option>
+                    <option value="6">Menginap 5 malam</option>
+                    <option value="8">Menginap 7 malam</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-footer">
+                <p>☂ Rekomendasi menyesuaikan aktivitas, cuaca, dan jam buka tujuan.</p>
+                <button class="primary-btn" id="submitBtn" type="submit">Lihat Rekomendasi <span>→</span></button>
+              </div>
+              <p class="status-line" id="formStatus" role="status" aria-live="polite"></p>
+            </form>
+          </section>
 
         </div>
-<div class="page" id="checklist"><section class="panel">
-          <div class="panel-heading"><div><span class="heading-icon">☑</span><h2>Checklist Persiapan Wisata</h2></div><span class="pill" id="packTag">Khusus aktivitas wisata</span></div>
-          <p class="muted-text" id="packIntro">Pilih aktivitas <b>Wisata / jalan-jalan</b> untuk mendapat daftar barang yang disesuaikan dengan tujuan, cuaca, transportasi, dan lama menginap.</p>
-          <div id="packingList" class="packing-list"></div>
-        </section>
-        <div class="page-next"><a href="#pengingat" aria-label="Lanjut ke Pengingat" title="Lanjut ke Pengingat">→</a></div>
-      
+        <div class="page" id="recommendations">
+          <section class="panel">
+            <div class="panel-heading">
+              <div><span class="heading-icon">✧</span>
+                <h2>Hasil Rekomendasi</h2>
+              </div><span class="pill">Cuaca · jam buka · rute</span>
+            </div>
+            <div class="empty-state" id="emptyState">
+              <svg viewBox="0 0 120 100">
+                <use href="#mimi" />
+              </svg>
+              <b>Rencana perjalananmu dimulai di sini</b>
+              <p>Isi tujuan, aktivitas, tanggal, dan jam berangkat. Mimi akan menggabungkan cuaca, kalender, jam buka,
+                dan rute jadi satu saran.</p>
+            </div>
+
+            <div id="results" class="hidden">
+              <div class="verdict" id="verdict">
+                <div class="verdict-icon" id="verdictIcon">✅</div>
+                <div><span class="verdict-label" id="verdictLabel">HASIL</span>
+                  <h3 id="verdictTitle">…</h3>
+                  <p id="verdictText"></p>
+                </div>
+              </div>
+
+              <div class="stats-grid">
+                <article class="stat-card"><small>Cuaca saat kegiatan</small><strong id="weatherValue">—</strong><span
+                    id="weatherDetail" class="stat-detail">—</span></article>
+                <article class="stat-card"><small>Suhu</small><strong id="tempValue">—</strong><span id="rainDetail"
+                    class="stat-detail">—</span></article>
+                <article class="stat-card"><small>Jam operasional</small><strong id="hoursValue">—</strong><span
+                    id="hoursDetail" class="stat-detail">—</span><a id="hoursLink" class="stat-link hidden"
+                    target="_blank" rel="noopener">Cek di Google Maps ↗</a></article>
+                <article class="stat-card"><small>Estimasi perjalanan</small><strong id="etaValue">—</strong><span
+                    id="etaDetail" class="stat-detail">—</span></article>
+              </div>
+
+              <div class="plans-head">
+                <h3>Perbandingan waktu berangkat</h3><span class="tiny-tag" id="plansNote">Pilihan terbaik di hari yang
+                  sama</span>
+              </div>
+              <div class="plans" id="plans"></div>
+
+              <div class="info-row">
+                <div class="info-box">
+                  <div class="subhead">
+                    <h3>Informasi tujuan</h3><a id="mapLink" target="_blank" rel="noopener">Buka di OpenStreetMap ↗</a>
+                  </div>
+                  <p id="placeAddress" class="address-text">—</p>
+                  <p id="placeNote" class="muted-text"></p>
+                </div>
+                <div class="info-box">
+                  <div class="subhead">
+                    <h3>Kalender</h3><span class="tiny-tag" id="calTag">—</span>
+                  </div>
+                  <p id="calText" class="muted-text">—</p>
+                  <div class="cal-actions"><button type="button" class="secondary-btn" id="icsBtn">⬇ Simpan ke kalender
+                      (.ics)</button><a class="secondary-btn" id="gcalBtn" target="_blank" rel="noopener">＋ Google
+                      Calendar</a></div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div class="page-next"><a href="#peta" aria-label="Lanjut ke Peta &amp; Rute"
+              title="Lanjut ke Peta &amp; Rute">→</a></div>
+
         </div>
-<div class="page" id="pengingat"><section class="panel">
-          <div class="panel-heading"><div><span class="heading-icon">♧</span><h2>Pengingat Perjalanan</h2></div></div>
-          <p id="reminderText" class="muted-text">Buat rencana perjalanan terlebih dahulu untuk mengatur pengingat.</p>
-          <div id="reminderBox" class="reminder-box hidden">
-            <label for="leadTime">Ingatkan saya</label>
-            <select id="leadTime"></select>
-            <button class="secondary-btn strong" id="enableReminder" type="button">Aktifkan notifikasi</button>
-            <button class="link-btn hidden" id="cancelReminder" type="button">Batalkan pengingat</button>
+        <div class="page" id="peta">
+          <section class="panel map-panel">
+            <div class="panel-heading">
+              <div><span class="heading-icon">⌖</span>
+                <h2>Peta Rute</h2>
+              </div><span class="pill">OpenStreetMap</span>
+            </div>
+            <div id="map" class="map" aria-label="Peta lokasi tujuan dan rute"></div>
+            <div class="legend"><span><i class="lg lg-route"></i>Rute</span><span>🟢 Awal</span><span>📍 Tujuan</span>
+            </div>
+            <p class="map-caption" id="mapCaption">Cari tujuan untuk melihat lokasinya di peta. Isi lokasi awal untuk
+              menampilkan rute.</p>
+          </section>
+          <div class="page-next"><a href="#cuaca" aria-label="Lanjut ke Cuaca per Jam"
+              title="Lanjut ke Cuaca per Jam">→</a></div>
+
+        </div>
+        <div class="page" id="cuaca">
+          <div class="page-grid">
+            <section class="panel today-panel">
+              <div class="today-top"><span id="todayDate">Hari ini</span><span>⌖ <b id="currentCity">Tujuan belum
+                    dipilih</b></span></div>
+              <div class="today-weather">
+                <div><strong id="currentTemp">—°</strong>
+                  <p id="currentDescription">Cuaca sekarang di tujuan</p>
+                </div><span id="currentWeatherIcon" class="big-weather">🌤️</span>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-heading">
+                <div><span class="heading-icon">☁</span>
+                  <h2>Cuaca di Tujuan</h2>
+                </div><a class="mini-link" id="wxLink" href="https://open-meteo.com" target="_blank"
+                  rel="noopener">Open-Meteo ↗</a>
+              </div>
+              <div class="hourly" id="hourly">
+                <p class="muted-text">Prakiraan per jam muncul setelah kamu membuat rencana.</p>
+              </div>
+              <div class="metrics">
+                <div><small>Peluang hujan</small><b id="rainChance">—</b></div>
+                <div><small>Kelembapan</small><b id="humidity">—</b></div>
+                <div><small>Indeks UV</small><b id="uv">—</b><em id="uvLabel"></em></div>
+                <div><small>Angin</small><b id="wind">—</b></div>
+                <div><small>Kualitas udara</small><b id="aqi">—</b><em id="aqiLabel"></em></div>
+              </div>
+              <small class="source-note">Ketuk tombol <b>ⓘ Asal angka</b> di pojok kanan bawah untuk melihat dari mana
+                setiap angka dan persentase berasal.</small>
+            </section>
           </div>
-          <small class="source-note">Notifikasi baru aktif setelah kamu menekan tombol dan memberi izin. Halaman perlu tetap terbuka (tab boleh di latar belakang).</small>
-        </section>
-        <div class="page-next"><a href="#recommendations" aria-label="Kembali ke Hasil Rekomendasi" title="Kembali ke Hasil Rekomendasi">←</a></div>
+          <section class="panel warn-panel" id="warnPanel">
+            <div class="panel-heading">
+              <div><span class="heading-icon warn">⚠</span>
+                <h2>Peringatan Cuaca</h2>
+              </div>
+            </div>
+            <p id="warnText" class="muted-text">Belum ada data.</p>
+          </section>
+          <div class="page-next"><a href="#checklist" aria-label="Lanjut ke Checklist Wisata"
+              title="Lanjut ke Checklist Wisata">→</a></div>
 
         </div>
-</div>
-    <footer><b>TripReady</b><span>Data berupa prakiraan dan bisa berubah. Untuk urusan penting, konfirmasi langsung ke tempat tujuan.</span></footer>
-  </main>
-</div>
-<div class="sheet hidden" id="pickSheet" role="dialog" aria-modal="true" aria-labelledby="pickTitle">
-  <div class="sheet-box pick-box">
-    <div class="sheet-head"><h3 id="pickTitle">Pilih lokasi awalmu</h3><button type="button" class="sheet-close" id="pickClose" aria-label="Tutup">✕</button></div>
-    <div class="ac-wrap pick-search">
-      <div class="input-wrap"><span class="field-icon">🔎</span><input id="pickSearch" placeholder="Cari tempatmu (jalan, kelurahan, kota)…" autocomplete="off"></div>
-      <ul class="suggest hidden" id="pickSuggest" role="listbox"></ul>
+        <div class="page" id="checklist">
+          <section class="panel">
+            <div class="panel-heading">
+              <div><span class="heading-icon">☑</span>
+                <h2>Checklist Persiapan Wisata</h2>
+              </div><span class="pill" id="packTag">Khusus aktivitas wisata</span>
+            </div>
+            <p class="muted-text" id="packIntro">Pilih aktivitas <b>Wisata / jalan-jalan</b> untuk mendapat daftar
+              barang yang disesuaikan dengan tujuan, cuaca, transportasi, dan lama menginap.</p>
+            <div id="packingList" class="packing-list"></div>
+          </section>
+          <div class="page-next"><a href="#pengingat" aria-label="Lanjut ke Pengingat" title="Lanjut ke Pengingat">→</a>
+          </div>
+
+        </div>
+        <div class="page" id="pengingat">
+          <section class="panel">
+            <div class="panel-heading">
+              <div><span class="heading-icon">♧</span>
+                <h2>Pengingat Perjalanan</h2>
+              </div>
+            </div>
+            <p id="reminderText" class="muted-text">Buat rencana perjalanan terlebih dahulu untuk mengatur pengingat.
+            </p>
+            <div id="reminderBox" class="reminder-box hidden">
+              <label for="leadTime">Ingatkan saya</label>
+              <select id="leadTime"></select>
+              <button class="secondary-btn strong" id="enableReminder" type="button">Aktifkan notifikasi</button>
+              <button class="secondary-btn" id="calAlarmBtn" type="button">⏰ Alarm di kalender HP</button>
+              <button class="link-btn hidden" id="cancelReminder" type="button">Batalkan pengingat</button>
+            </div>
+            <small class="source-note">Notifikasi peramban hanya bunyi selama halaman ini masih terbuka (tab boleh di
+              latar belakang). Agar tetap bunyi saat web ditutup, pakai tombol <b>⏰ Alarm di kalender HP</b>.</small>
+          </section>
+          <div class="page-next"><a href="#recommendations" aria-label="Kembali ke Hasil Rekomendasi"
+              title="Kembali ke Hasil Rekomendasi">←</a></div>
+
+        </div>
+      </div>
+      <footer><b>TripReady</b><span>Data berupa prakiraan dan bisa berubah. Untuk urusan penting, konfirmasi langsung ke
+          tempat tujuan.</span></footer>
+    </main>
+  </div>
+  <div class="sheet hidden" id="pickSheet" role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+    <div class="sheet-box pick-box">
+      <div class="sheet-head">
+        <h3 id="pickTitle">Pilih lokasi awalmu</h3><button type="button" class="sheet-close" id="pickClose"
+          aria-label="Tutup">✕</button>
+      </div>
+      <div class="ac-wrap pick-search">
+        <div class="input-wrap"><span class="field-icon">🔎</span><input id="pickSearch"
+            placeholder="Cari tempatmu (jalan, kelurahan, kota)…" autocomplete="off"></div>
+        <ul class="suggest hidden" id="pickSuggest" role="listbox"></ul>
+      </div>
+      <div id="pickMap" class="map pick-map"></div>
+      <p class="muted-text" id="pickHint">Ketuk atau klik peta untuk menaruh titik. Zoom dulu agar tepat.</p>
+      <div class="pick-foot"><button type="button" class="secondary-btn" id="pickCancel">Batal</button><button
+          type="button" class="primary-btn" id="pickOk" disabled>Pakai titik ini</button></div>
     </div>
-    <div id="pickMap" class="map pick-map"></div>
-    <p class="muted-text" id="pickHint">Ketuk atau klik peta untuk menaruh titik. Zoom dulu agar tepat.</p>
-    <div class="pick-foot"><button type="button" class="secondary-btn" id="pickCancel">Batal</button><button type="button" class="primary-btn" id="pickOk" disabled>Pakai titik ini</button></div>
   </div>
-</div>
-<button type="button" class="info-fab hidden" id="infoFab" aria-haspopup="dialog">ⓘ Asal angka</button>
-<div class="sheet hidden" id="infoSheet" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
-  <div class="sheet-box">
-    <div class="sheet-head"><h3 id="infoTitle">Dari mana angka ini?</h3><button type="button" class="sheet-close" id="infoClose" aria-label="Tutup">✕</button></div>
-    <div id="infoBody"></div>
+  <button type="button" class="info-fab hidden" id="infoFab" aria-haspopup="dialog">ⓘ Asal angka</button>
+  <div class="sheet hidden" id="infoSheet" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+    <div class="sheet-box">
+      <div class="sheet-head">
+        <h3 id="infoTitle">Dari mana angka ini?</h3><button type="button" class="sheet-close" id="infoClose"
+          aria-label="Tutup">✕</button>
+      </div>
+      <div id="infoBody"></div>
+    </div>
   </div>
-</div>
-<div class="toast" id="toast" role="status"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="app.js"></script>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="js/core/core.js"></script>
+  <script src="js/views/ui.js"></script>
+  <script src="js/controllers/location.js"></script>
+  <script src="js/services/api.js"></script>
+  <script src="js/models/opening-hours.js"></script>
+  <script src="js/models/assessment.js"></script>
+  <script src="js/views/results-view.js"></script>
+  <script src="js/models/packing.js"></script>
+  <script src="js/views/packing-view.js"></script>
+  <script src="js/views/map-view.js"></script>
+  <script src="js/services/notification.js"></script>
+  <script src="js/services/calendar.js"></script>
+  <script src="js/controllers/reminder.js"></script>
+  <script src="js/controllers/trip.js"></script>
 </body>
+
 </html>
