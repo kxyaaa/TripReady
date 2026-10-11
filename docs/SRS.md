@@ -16,7 +16,7 @@
 | FR-07 | Sistem memberi tahu tanggal merah dan akhir pekan |
 | FR-08 | Sistem memberi verdict (layak / perlu antisipasi / kurang disarankan) dan Plan A/B/C |
 | FR-09 | Sistem membuat checklist barang untuk aktivitas wisata |
-| FR-10 | Pengguna dapat mengekspor rencana ke kalender (.ics, Google Calendar) dengan alarm |
+| FR-10 | Pengguna dapat mengekspor rencana ke kalender (.ics, Google Calendar) |
 | FR-11 | Pengguna dapat mengaktifkan pengingat notifikasi yang tetap muncul saat web ditutup (Web Push) |
 | FR-12 | Sistem menjelaskan asal setiap angka (panel "Asal angka") |
 

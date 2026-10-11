@@ -9,7 +9,7 @@ Aplikasi web untuk memutuskan **kapan dan apakah layak berangkat**: menggabungka
 - Jam buka tempat (OpenStreetMap) dan hari libur nasional
 - Skor risiko + perbandingan waktu berangkat (Plan A/B/C)
 - Checklist barang bawaan untuk wisata
-- Ekspor ke kalender (.ics / Google Calendar) dengan alarm, plus pengingat browser
+- Ekspor ke kalender (.ics / Google Calendar) dan notifikasi pengingat (Web Push)
 - Panel "Asal angka" yang menjelaskan sumber tiap angka
 
 ## Menjalankan
@@ -24,7 +24,7 @@ node tests/smoke.test.js     # uji cepat (opsional)
 index.html  style.css  sw.js
 js/
   core/         konstanta, helper, state global S
-  models/       logika murni: assessment (skor risiko), opening-hours, packing
+  models/       logika murni: assessment (skor risiko), opening-hours, packing, category (jenis tempat)
   services/     api (HTTP ke API publik), calendar, notification
   views/        render DOM: ui, results-view, packing-view, map-view
   controllers/  alur & event: location, reminder, trip (alur utama)
@@ -45,5 +45,5 @@ Urutan `<script>` di `index.html` penting (tanpa bundler).
 ## Batasan yang diketahui
 - Prakiraan hanya 16 hari; API gratis bisa kena rate limit
 - Jam buka bergantung pada data sukarelawan OSM (ada perkiraan berdasarkan jenis tempat)
-- Notifikasi saat web ditutup butuh Worker Web Push (opsional, lihat docs/PUSH_SETUP.md; bisa telat hingga ±2 menit); tanpa itu gunakan alarm kalender
+- Notifikasi saat web ditutup butuh Worker Web Push (opsional, lihat docs/PUSH_SETUP.md; bisa telat hingga ±2 menit); tanpa itu pengingat hanya bunyi selama halaman terbuka
 - Kode berlapis (model/service/view/controller) namun masih berbagi state global `S`
