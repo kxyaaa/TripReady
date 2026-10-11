@@ -10,7 +10,7 @@ const dom = () => new Proxy(function () {}, {
   apply: () => dom(), set: () => true });
 const ctx = { document: { getElementById: () => dom(), querySelectorAll: () => [], addEventListener() {}, createElement: () => dom(), body: dom() },
   location: { hash: "" }, navigator: {}, localStorage: { getItem: () => null, setItem() {}, removeItem() {} }, Notification: { permission: "default" },
-  setInterval: () => 0, setTimeout: () => 0, clearTimeout() {}, addEventListener() {}, scrollTo() {}, console };
+  AbortController, URL, setInterval: () => 0, setTimeout: () => 0, clearTimeout() {}, addEventListener() {}, scrollTo() {}, console };
 ctx.window = ctx; vm.createContext(ctx);
 for (const s of scripts) vm.runInContext(fs.readFileSync(path.join(root, s), "utf8"), ctx, { filename: s });
 const ev = (code) => vm.runInContext(code, ctx);
@@ -21,4 +21,20 @@ assert.strictEqual(ev('parseOpening("Mo-Fr 08:00-17:00").isOpen(1, 600)'), true)
 assert.strictEqual(ev('parseOpening("Mo-Fr 08:00-17:00").isOpen(0, 600)'), false);
 assert.strictEqual(ev('parseOpening("24/7").isOpen(3, 30)'), true);
 assert.strictEqual(ev('sevOf(95)'), 4);
-console.log(`OK: ${scripts.length} skrip termuat berurutan, 7 pengecekan lolos.`);
+(async () => {
+  assert.strictEqual(ev('matchCategory("Toko Baju terdekat").label'), "Toko pakaian");
+  assert.strictEqual(ev('matchCategory("apotek").label'), "Apotek");
+  assert.strictEqual(ev('matchCategory("Zara")'), null, "nama tempat biasa tidak dianggap jenis");
+  const place = '({ lat: "3.5", lon: "98.6", name: "Apotek X", type: "pharmacy", category: "amenity", display_name: "Apotek X, Medan", extratags: {}, osmRef: { type: "node", id: 1 } })';
+  ctx.fetch = async () => new Response(JSON.stringify({ elements: [] }), { status: 200 });
+  const ok = await ev(`fetchHours(${place})`);
+  ctx.fetch = async () => { throw new Error("jaringan"); };
+  const gagal = await ev(`fetchHours(${place})`);
+  assert.strictEqual(ok?.tag, "08:00-21:00");
+  assert.strictEqual(gagal?.tag, ok?.tag, "server Overpass sibuk atau tidak, hasil jam buka harus sama");
+  ctx.fetch = async () => new Response(JSON.stringify({ elements: [{ type: "node", id: 9, lat: 3.51, lon: 98.61, tags: { name: "Toko Baju Mawar", shop: "clothes", opening_hours: "Mo-Su 09:00-21:00" } }] }), { status: 200 });
+  const near = await ev('searchNearby(matchCategory("toko baju"), [3.5, 98.6])');
+  assert.strictEqual(near[0].name, "Toko Baju Mawar");
+  assert.strictEqual(near[0].extratags.opening_hours, "Mo-Su 09:00-21:00");
+  console.log(`OK: ${scripts.length} skrip termuat berurutan, 14 pengecekan lolos.`);
+})().catch((e) => { console.error(e); process.exit(1); });

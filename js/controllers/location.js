@@ -27,18 +27,23 @@ function fromPhoton(f) {
   };
 }
 async function searchPlaces(q, { bias = null, signal, explicit = false } = {}) {
+  const cat = bias && matchCategory(q);
+  if (cat) { // mis. "toko baju": cari berdasarkan jenis tempat di sekitar, bukan nama
+    try { const near = await searchNearby(cat, bias, signal); if (near.length) return near; }
+    catch (e) { if (e.name === "AbortError") throw e; }
+  }
   let list = null;
   try {
     const r = await fetch(`${PHOTON}?q=${encodeURIComponent(q)}&limit=15${bias ? `&lat=${bias[0]}&lon=${bias[1]}` : ""}`, { signal });
     if (!r.ok) throw new Error("photon " + r.status);
     list = ((await r.json()).features || []).filter((f) => f.geometry?.coordinates).map(fromPhoton);
   } catch (e) { if (e.name === "AbortError") throw e; }
-  if ((!list || !list.length) && explicit) list = await geocode(q, 10, bias);
+  if ((!list || !list.length) && explicit) list = await geocode(q, 10, bias); 
   if (list === null) throw new Error("Layanan pencarian tempat sedang sibuk. Tekan Enter untuk mencoba pencarian cadangan.");
   if (bias) {
     list.forEach((p) => { p.distKm = haversine(bias, [Number(p.lat), Number(p.lon)]); });
     const tok = nrm(q), hit = (p) => (nrm(p.name).includes(tok) ? 1 : 0);
-    list.sort((a, b) => hit(b) - hit(a) || (hit(a) && hit(b) ? a.distKm - b.distKm : 0));
+    list.sort((a, b) => hit(b) - hit(a) || (hit(a) && hit(b) ? a.distKm - b.distKm : 0)); 
   }
   return list;
 }
@@ -71,8 +76,8 @@ function attachAC({ inputId, listId, pickKey, queryKey, bias, biasText, noBiasTe
     S[pickKey] = p; S[queryKey] = label; input.value = label; input.title = p.display_name; input.scrollLeft = 0;
     clearTimeout(st.timer); st.ctrl?.abort(); st.seq++; hide(); onPick?.(p);
   };
-  const render = (list, hasBias) => {
-    if (!list.length) return msg("Tempat tidak ditemukan. Coba ejaan lain atau tambahkan nama kota/daerah.");
+  const render = (list, hasBias, explicit) => {
+    if (!list.length) return msg(explicit ? "Tidak ditemukan di data OpenStreetMap. Coba ejaan lain, tambahkan nama kota, atau ketik jenis tempat seperti \"toko baju\"." : "Belum ada hasil. Tekan Enter untuk pencarian lanjutan, atau tambahkan nama kota.");
     ul.innerHTML = list.map((p, i) => `<li role="option" data-i="${i}"><span class="s-ic">${placeIcon(p)}</span><span class="s-tx"><b>${esc(shortName(p))}</b><small>${esc(subLine(p))}</small></span>${p.distKm != null ? `<span class="s-dist">${fmtDist(p.distKm)}</span>` : ""}</li>`).join("")
       + `<li class="s-hint">${esc(hasBias ? biasText : noBiasText)}</li>`;
     ul.classList.remove("hidden");
@@ -86,7 +91,7 @@ function attachAC({ inputId, listId, pickKey, queryKey, bias, biasText, noBiasTe
     try {
       const list = (await searchPlaces(q, { bias: b, signal: ctrl.signal, explicit })).slice(0, 8);
       if (my !== st.seq) return null;
-      st.items = list; st.active = -1; render(list, !!b);
+      st.items = list; st.active = -1; render(list, !!b, explicit);
       return list;
     } catch (e) {
       if (e.name === "AbortError" || my !== st.seq) return null;
@@ -159,7 +164,7 @@ function setOrigin(lat, lon, rev, prefix) {
   el.value = label; el.title = rev?.display_name || label; el.scrollLeft = 0;
   return label;
 }
-const GOOD_ACC = 100;
+const GOOD_ACC = 100; 
 $("geoBtn").addEventListener("click", () => {
   if (!navigator.geolocation) { toast("Perangkat ini tidak mendukung deteksi lokasi."); return; }
   const btn = $("geoBtn"); btn.disabled = true;
@@ -209,9 +214,9 @@ function openPick(o = {}) {
   $("pickOk").textContent = pk.mode === "geo" ? "Ya, lokasi saya di sini" : "Pakai titik ini";
   if (!pk.map) {
     pk.map = L.map("pickMap", { minZoom: 2, worldCopyJump: true });
-
+    
     L.tileLayer(TILE_URL, { maxZoom: 19, attribution: TILE_ATTR }).addTo(pk.map);
-
+    
     pk.map.on("click", (e) => placePick(e.latlng));
   }
   if (pk.marker) { pk.map.removeLayer(pk.marker); pk.marker = null; }

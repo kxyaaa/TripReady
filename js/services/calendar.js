@@ -10,9 +10,8 @@ function downloadICS(lead = 30) {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = "perjalanan-tripready.ics";
   document.body.appendChild(a); a.click(); a.remove();
-  toast("Buka file .ics-nya lalu simpan ke kalender. Alarm akan bunyi walau web ditutup.");
+  toast("Buka file .ics-nya lalu simpan ke kalender.");
 }
-$("calAlarmBtn").addEventListener("click", () => downloadICS(Number($("leadTime").value) || 30));
 
 function setupCalendar(C, A, dest) {
   const startD = new Date(C.depTs);
