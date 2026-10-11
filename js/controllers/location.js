@@ -38,12 +38,12 @@ async function searchPlaces(q, { bias = null, signal, explicit = false } = {}) {
     if (!r.ok) throw new Error("photon " + r.status);
     list = ((await r.json()).features || []).filter((f) => f.geometry?.coordinates).map(fromPhoton);
   } catch (e) { if (e.name === "AbortError") throw e; }
-  if ((!list || !list.length) && explicit) list = await geocode(q, 10, bias); 
+  if ((!list || !list.length) && explicit) list = await geocode(q, 10, bias);
   if (list === null) throw new Error("Layanan pencarian tempat sedang sibuk. Tekan Enter untuk mencoba pencarian cadangan.");
   if (bias) {
     list.forEach((p) => { p.distKm = haversine(bias, [Number(p.lat), Number(p.lon)]); });
     const tok = nrm(q), hit = (p) => (nrm(p.name).includes(tok) ? 1 : 0);
-    list.sort((a, b) => hit(b) - hit(a) || (hit(a) && hit(b) ? a.distKm - b.distKm : 0)); 
+    list.sort((a, b) => hit(b) - hit(a) || (hit(a) && hit(b) ? a.distKm - b.distKm : 0));
   }
   return list;
 }
@@ -164,7 +164,7 @@ function setOrigin(lat, lon, rev, prefix) {
   el.value = label; el.title = rev?.display_name || label; el.scrollLeft = 0;
   return label;
 }
-const GOOD_ACC = 100; 
+const GOOD_ACC = 100;
 $("geoBtn").addEventListener("click", () => {
   if (!navigator.geolocation) { toast("Perangkat ini tidak mendukung deteksi lokasi."); return; }
   const btn = $("geoBtn"); btn.disabled = true;
@@ -214,9 +214,9 @@ function openPick(o = {}) {
   $("pickOk").textContent = pk.mode === "geo" ? "Ya, lokasi saya di sini" : "Pakai titik ini";
   if (!pk.map) {
     pk.map = L.map("pickMap", { minZoom: 2, worldCopyJump: true });
-    
+
     L.tileLayer(TILE_URL, { maxZoom: 19, attribution: TILE_ATTR }).addTo(pk.map);
-    
+
     pk.map.on("click", (e) => placePick(e.latlng));
   }
   if (pk.marker) { pk.map.removeLayer(pk.marker); pk.marker = null; }

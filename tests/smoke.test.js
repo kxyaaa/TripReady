@@ -4,13 +4,16 @@ const root = path.join(__dirname, "..");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const scripts = [...html.matchAll(/<script src="(js\/[^"]+)"/g)].map((m) => m[1]);
 assert(scripts.length > 0, "tidak ada skrip js/ di index.html");
-const dom = () => new Proxy(function () {}, {
-  get: (t, k) => k === "then" ? undefined : k === Symbol.toPrimitive ? () => "" : k === "classList" ? { add() {}, remove() {}, toggle() {}, contains: () => false }
+const dom = () => new Proxy(function () { }, {
+  get: (t, k) => k === "then" ? undefined : k === Symbol.toPrimitive ? () => "" : k === "classList" ? { add() { }, remove() { }, toggle() { }, contains: () => false }
     : k === "style" || k === "dataset" ? {} : ["value", "textContent", "innerHTML"].includes(k) ? "" : dom(),
-  apply: () => dom(), set: () => true });
-const ctx = { document: { getElementById: () => dom(), querySelectorAll: () => [], addEventListener() {}, createElement: () => dom(), body: dom() },
-  location: { hash: "" }, navigator: {}, localStorage: { getItem: () => null, setItem() {}, removeItem() {} }, Notification: { permission: "default" },
-  AbortController, URL, setInterval: () => 0, setTimeout: () => 0, clearTimeout() {}, addEventListener() {}, scrollTo() {}, console };
+  apply: () => dom(), set: () => true
+});
+const ctx = {
+  document: { getElementById: () => dom(), querySelectorAll: () => [], addEventListener() { }, createElement: () => dom(), body: dom() },
+  location: { hash: "" }, navigator: {}, localStorage: { getItem: () => null, setItem() { }, removeItem() { } }, Notification: { permission: "default" },
+  AbortController, URL, setInterval: () => 0, setTimeout: () => 0, clearTimeout() { }, addEventListener() { }, scrollTo() { }, console
+};
 ctx.window = ctx; vm.createContext(ctx);
 for (const s of scripts) vm.runInContext(fs.readFileSync(path.join(root, s), "utf8"), ctx, { filename: s });
 const ev = (code) => vm.runInContext(code, ctx);
