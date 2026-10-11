@@ -1,27 +1,48 @@
-# TripReady
+# TripReady — Ready Before You Go
 
-TripReady adalah aplikasi web interaktif yang dirancang untuk membantu pengguna merencanakan perjalanan secara komprehensif. Aplikasi ini menyediakan analisis cuaca, peluang hujan, kualitas udara, status operasional destinasi, serta perhitungan estimasi rute perjalanan secara real-time sebelum keberangkatan.
+Aplikasi web untuk memutuskan **kapan dan apakah layak berangkat**: menggabungkan prakiraan cuaca, jam buka tempat, hari libur, dan estimasi rute menjadi satu rekomendasi (Plan A/B/C). Tanpa akun dan tanpa database; semua data diambil dari API publik.
 
-Proyek ini dikembangkan menggunakan Vanilla JavaScript, HTML5, dan CSS3 tanpa ketergantungan pada database backend (100% sisi klien).
+## Fitur
+- Pencarian tujuan & lokasi awal dengan autocomplete, lokasi perangkat, dan pemilih titik di peta
+- Cuaca per jam, indeks UV, kualitas udara, peringatan hujan/badai
+- Estimasi perjalanan (motor, mobil, bus, kereta, pesawat, kapal, sepeda, jalan kaki)
+- Jam buka tempat (OpenStreetMap) dan hari libur nasional
+- Skor risiko + perbandingan waktu berangkat (Plan A/B/C)
+- Checklist barang bawaan untuk wisata
+- Ekspor ke kalender (.ics / Google Calendar) dengan alarm, plus pengingat browser
+- Panel "Asal angka" yang menjelaskan sumber tiap angka
 
-## Fitur Utama
+## Menjalankan
+Service Worker butuh `https://` atau `localhost`:
+```bash
+python -m http.server 8000   # lalu buka http://localhost:8000
+node tests/smoke.test.js     # uji cepat (opsional)
+```
 
-- **Peta & Rute Interaktif:** Visualisasi peta berbasis tile interaktif dan integrasi mesin perutean untuk estimasi jalur perjalanan.
-- **Integrasi Cuaca & Kualitas Udara:** Pemantauan suhu, indeks UV, kecepatan angin, peluang hujan, dan indeks AQI melalui Open-Meteo API.
-- **Analisis Risiko & Rekomendasi Waktu:** Sistem penilaian otomatis untuk kelayakan waktu keberangkatan berdasarkan kondisi cuaca, hari libur nasional (Nager.Date), dan jam operasional tempat tujuan.
-- **Smart Packing Checklist:** Generator otomatis daftar perlengkapan perjalanan yang disesuaikan dengan destinasi, kondisi cuaca, moda transportasi, dan durasi kunjungan.
-- **Ekspor Kalender & Pengingat:** Fitur ekspor jadwal ke format kalender (.ics), Google Calendar, serta pengingat berbasis notifikasi browser.
+## Struktur proyek
+```
+index.html  style.css  sw.js
+js/
+  core/         konstanta, helper, state global S
+  models/       logika murni: assessment (skor risiko), opening-hours, packing
+  services/     api (HTTP ke API publik), calendar, notification
+  views/        render DOM: ui, results-view, packing-view, map-view
+  controllers/  alur & event: location, reminder, trip (alur utama)
+docs/           SRS, ARSITEKTUR, API, USER_MANUAL, AGILE
+tests/          smoke.test.js
+```
+Urutan `<script>` di `index.html` penting (tanpa bundler).
 
-## Teknologi yang Digunakan
+## Dokumentasi
+[SRS](docs/SRS.md) · [Arsitektur](docs/ARSITEKTUR.md) · [API](docs/API.md) · [Panduan Pengguna](docs/USER_MANUAL.md) · [Git & Agile](docs/AGILE.md)
 
-- **Frontend:** HTML5, CSS3, JavaScript (ES6+)
-- **Peta & Geospasial:** Leaflet.js, OpenStreetMap Tiles, Nominatim API (Geocoding), OSRM (Open Source Routing Machine).
-- **Layanan API Publik:** 
-  - Open-Meteo (Weather & Air Quality API)
-  - Nager.Date API (Public Holidays)
+## Keamanan
+- Semua teks dari API/pengguna yang masuk ke HTML melewati `esc()` (anti-XSS)
+- Tidak ada kunci API, kredensial, atau data pribadi yang disimpan; hanya jadwal pengingat di `localStorage`
+- Tile peta memakai OpenStreetMap (sesuai kebijakan penggunaan)
 
-## Cara Menjalankan
-
-1. Clone repository ini:
-   ```bash
-   git clone [https://github.com/username-kamu/TripReady.git](https://github.com/username-kamu/TripReady.git)
+## Batasan yang diketahui
+- Prakiraan hanya 16 hari; API gratis bisa kena rate limit
+- Jam buka bergantung pada data sukarelawan OSM (ada perkiraan berdasarkan jenis tempat)
+- Notifikasi browser hanya bunyi saat halaman terbuka; untuk web tertutup gunakan alarm kalender
+- Kode berlapis (model/service/view/controller) namun masih berbagi state global `S`
