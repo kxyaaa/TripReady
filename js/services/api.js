@@ -35,12 +35,12 @@ const OSRM = { car: "https://routing.openstreetmap.de/routed-car", bike: "https:
 async function fetchRoute(o, d, profile) {
   // MEMAKSA RESOLUSI RUTE FULL AGAR GARISNYA SUPER AKURAT & TIDAK PATAH-PATAH
   const path = `/route/v1/driving/${o.lon},${o.lat};${d.lon},${d.lat}?overview=full&geometries=geojson`;
-  const urls = [OSRM[profile] + path];
-
+  const urls = [OSRM[profile] + path]; 
+  
   if (profile === "car") {
     urls.unshift("https://router.project-osrm.org" + path); // Prioritas server utama OSRM
   }
-
+  
   for (const u of urls) {
     try {
       const r = await fetch(u); if (!r.ok) continue;
@@ -55,36 +55,30 @@ async function computeTravel(mode, origin, dest) {
   const o = [+origin.lat, +origin.lon], d = [+dest.lat, +dest.lon], air = haversine(o, d), nm = MODE_NAME[mode];
   if (mode === "plane" || mode === "ship") {
     const v = EST[mode], eta = Math.max(1, Math.ceil((air / v) * 60));
-    return {
-      kind: "est", eta, distKm: air, geometry: mode === "plane" ? arc(o, d) : [o, [d[0], unwrapLon(d[1], o[1])]], dashed: true,
+    return { kind: "est", eta, distKm: air, geometry: mode === "plane" ? arc(o, d) : [o, [d[0], unwrapLon(d[1], o[1])]], dashed: true,
       detail: `${air.toFixed(0)} km garis lurus · perkiraan rata-rata ${v} km/jam (bukan jadwal)`,
       how: `Tidak ada API gratis yang menyediakan jadwal ${nm}. Dihitung dari jarak garis lurus lokasi awal–tujuan (${air.toFixed(0)} km, rumus haversine dari koordinat Nominatim) ÷ kecepatan rata-rata ${v} km/jam. Belum termasuk check-in, boarding, transit, atau cuaca. Cek jadwal resmi operator.`,
-      caption: mode === "plane" ? `Garis lengkung putus-putus = rute terpendek di permukaan bumi (great-circle) ± ${air.toFixed(0)} km; rute maskapai sebenarnya bisa berbeda.` : `Garis putus-putus = jarak lurus ± ${air.toFixed(0)} km, bukan jalur pelayaran.`
-    };
+      caption: mode === "plane" ? `Garis lengkung putus-putus = rute terpendek di permukaan bumi (great-circle) ± ${air.toFixed(0)} km; rute maskapai sebenarnya bisa berbeda.` : `Garis putus-putus = jarak lurus ± ${air.toFixed(0)} km, bukan jalur pelayaran.` };
   }
   const profile = ROAD[mode];
   // Panggil fetchRoute tanpa parameter `long`
   const r = await fetchRoute(origin, dest, profile);
-
+  
   if (!r) return { kind: "none", eta: 0, detail: `Rute ${nm} tidak ditemukan dari lokasi awal (mungkin beda pulau/benua). Coba pesawat atau kapal.`, how: "", caption: "" };
   const km = r.distance / 1000, geometry = r.geometry.coordinates.map(([x, y]) => [y, x]);
   if (mode === "train") {
     const v = EST.train, eta = Math.max(1, Math.ceil((km / v) * 60));
-    return {
-      kind: "est", eta, distKm: km, geometry, dashed: false,
+    return { kind: "est", eta, distKm: km, geometry, dashed: false,
       detail: `${km.toFixed(1)} km (rute jalan) · perkiraan rata-rata ${v} km/jam (bukan jadwal)`,
       how: `Tidak ada API gratis untuk jadwal kereta. Jarak memakai rute jalan dari OSRM (${km.toFixed(1)} km) sebagai pendekatan lintasan rel, ÷ kecepatan rata-rata ${v} km/jam. Belum termasuk menunggu/transit; cek jadwal resmi operator.`,
-      caption: `Garis biru = rute jalan ${km.toFixed(1)} km sebagai pendekatan; jalur rel sebenarnya bisa berbeda.`
-    };
+      caption: `Garis biru = rute jalan ${km.toFixed(1)} km sebagai pendekatan; jalur rel sebenarnya bisa berbeda.` };
   }
   const eta = Math.max(1, Math.ceil(r.duration / 60));
   const note = mode === "motor" ? " OSRM tidak punya profil motor, jadi memakai profil mobil." : mode === "bus" ? " Memakai profil mobil; bus bisa lebih lama karena berhenti/transit." : "";
-  return {
-    kind: "api", eta, distKm: km, geometry, dashed: false, profile,
+  return { kind: "api", eta, distKm: km, geometry, dashed: false, profile,
     detail: `${km.toFixed(1)} km · durasi langsung dari API rute (OSRM, profil ${profile})`,
     how: `Durasi ${fmtDur(eta)} dan jarak ${km.toFixed(1)} km diambil langsung dari OSRM (${r.src}), profil "${profile}", mengikuti jaringan jalan nyata.${note} Tidak mencakup kemacetan langsung.`,
-    caption: `Rute ${km.toFixed(1)} km (garis biru). Tidak mencakup kemacetan langsung.`
-  };
+    caption: `Rute ${km.toFixed(1)} km (garis biru). Tidak mencakup kemacetan langsung.` };
 }
 
 async function fetchOffset(lat, lon) {
@@ -142,20 +136,6 @@ async function fetchHours(dest) {
   return null;
 }
 
-/* Cari tempat berdasarkan JENIS ("toko baju") di sekitar titik acuan, radius 5 km */
-async function searchNearby(cat, [lat, lon], signal) {
-  const els = await overpass(`[out:json][timeout:20];nwr(around:5000,${lat},${lon})${cat.f}[name];out center tags 80;`, { signal, ms: 15000 });
-  if (els === null) throw new Error("Layanan data tempat sedang sibuk. Coba lagi sebentar.");
-  const cc = S.origin?.address?.country_code || "";
-  return els.filter((e) => (e.lat ?? e.center?.lat) != null).map((e) => {
-    const t = e.tags || {}, la = e.lat ?? e.center.lat, lo = e.lon ?? e.center.lon;
-    const addr = [t["addr:street"], t["addr:housenumber"], t["addr:suburb"] || t["addr:district"], t["addr:city"]].filter(Boolean).join(", ");
-    return {
-      lat: String(la), lon: String(lo), name: t.name, display_name: [t.name, addr].filter(Boolean).join(", "), category: t.shop ? "shop" : "amenity", type: t.shop || t.amenity,
-      extratags: t, osmRef: { type: e.type, id: e.id }, address: { country_code: cc, road: t["addr:street"], city: t["addr:city"] }, distKm: haversine([lat, lon], [la, lo])
-    };
-  }).sort((a, b) => a.distKm - b.distKm).slice(0, 15);
-}
 const holCache = {};
 async function fetchHolidays(cc, year) {
   if (!cc) return {};

@@ -6,7 +6,8 @@ self.addEventListener("push", (e) => {
   let d = {}; try { d = e.data ? e.data.json() : {}; } catch { }
   e.waitUntil(self.registration.showNotification(d.title || "TripReady — waktunya bersiap!", {
     body: d.body || "Perjalananmu segera dimulai. Buka TripReady untuk cek cuaca dan persiapan.",
-    tag: "tripready-reminder", requireInteraction: true }));
+    tag: "tripready-reminder", requireInteraction: true
+  }));
 });
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();

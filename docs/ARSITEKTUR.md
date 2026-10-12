@@ -6,7 +6,7 @@ Aplikasi *client-side* murni, tanpa database. Karena itu tidak ada ERD fisik; ya
 | Lapisan | Tanggung jawab | Berkas |
 |---|---|---|
 | core | Konstanta, helper, state sesi `S` | `core/core.js` |
-| models | Logika murni tanpa DOM/HTTP (skor risiko, parser jam buka, checklist, pemetaan jenis tempat) | `models/*.js` |
+| models | Logika murni tanpa DOM/HTTP (skor risiko, parser jam buka, checklist) | `models/*.js` |
 | services | Komunikasi eksternal (API, kalender, notifikasi) | `services/*.js` |
 | views | Menulis ke DOM | `views/*.js` |
 | controllers | Menangani event & mengorkestrasi alur | `controllers/*.js` |

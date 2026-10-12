@@ -27,7 +27,10 @@ async function sendDue(env) {
     await env.REMINDERS.delete(name);
     await env.REMINDERS.delete("e:" + name.slice(18));
     if (!endpoint || now - at > 30 * 60000) continue; // terlalu basi: buang saja
-    try { await fetch(endpoint, { method: "POST", headers: { Authorization: await vapidAuth(endpoint, env), TTL: "3600", Urgency: "high" } }); } catch { }
+    try {
+      const r = await fetch(endpoint, { method: "POST", headers: { Authorization: await vapidAuth(endpoint, env), TTL: "3600", Urgency: "high" } });
+      console.log("push", r.status, (await r.text()).slice(0, 200));
+    } catch (e) { console.log("push gagal", String(e)); }
   }
 }
 
@@ -59,6 +62,14 @@ export default {
       if (key) await env.REMINDERS.delete(key);
       await env.REMINDERS.delete("e:" + id);
       return reply({ ok: true });
+    }
+    if (path === "/test") { // diagnosa: kirim push sekarang ke langganan ini dan tampilkan balasan layanan push
+      const endpoint = body?.subscription?.endpoint;
+      if (typeof endpoint !== "string" || !endpoint.startsWith("https://")) return reply({ error: "data tidak valid" }, 400);
+      try {
+        const r = await fetch(endpoint, { method: "POST", headers: { Authorization: await vapidAuth(endpoint, env), TTL: "60", Urgency: "high" } });
+        return reply({ status: r.status, body: (await r.text()).slice(0, 300) });
+      } catch (e) { return reply({ error: String(e) }, 500); }
     }
     return reply({ error: "tidak ditemukan" }, 404);
   },

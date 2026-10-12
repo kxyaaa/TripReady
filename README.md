@@ -24,7 +24,7 @@ node tests/smoke.test.js     # uji cepat (opsional)
 index.html  style.css  sw.js
 js/
   core/         konstanta, helper, state global S
-  models/       logika murni: assessment (skor risiko), opening-hours, packing, category (jenis tempat)
+  models/       logika murni: assessment (skor risiko), opening-hours, packing
   services/     api (HTTP ke API publik), calendar, notification
   views/        render DOM: ui, results-view, packing-view, map-view
   controllers/  alur & event: location, reminder, trip (alur utama)

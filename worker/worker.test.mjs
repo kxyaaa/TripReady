@@ -4,11 +4,15 @@ import worker from "./worker.mjs";
 const b64u = (b) => Buffer.from(b).toString("base64url");
 const kp = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
 const store = new Map();
-const kv = { get: async (k) => store.get(k) ?? null, put: async (k, v) => void store.set(k, v), delete: async (k) => void store.delete(k),
-  list: async ({ prefix }) => ({ keys: [...store.keys()].filter((k) => k.startsWith(prefix)).sort().map((name) => ({ name })) }) };
+const kv = {
+  get: async (k) => store.get(k) ?? null, put: async (k, v) => void store.set(k, v), delete: async (k) => void store.delete(k),
+  list: async ({ prefix }) => ({ keys: [...store.keys()].filter((k) => k.startsWith(prefix)).sort().map((name) => ({ name })) })
+};
 const O = "https://kxyaaa.github.io";
-const env = { REMINDERS: kv, ALLOWED_ORIGIN: O, VAPID_SUBJECT: "mailto:a@b.c", VAPID_PUBLIC: b64u(await crypto.subtle.exportKey("raw", kp.publicKey)),
-  VAPID_PRIVATE_JWK: JSON.stringify(await crypto.subtle.exportKey("jwk", kp.privateKey)) };
+const env = {
+  REMINDERS: kv, ALLOWED_ORIGIN: O, VAPID_SUBJECT: "mailto:a@b.c", VAPID_PUBLIC: b64u(await crypto.subtle.exportKey("raw", kp.publicKey)),
+  VAPID_PRIVATE_JWK: JSON.stringify(await crypto.subtle.exportKey("jwk", kp.privateKey))
+};
 const post = (path, body, origin = O) => worker.fetch(new Request("https://w.dev" + path, { method: "POST", headers: { Origin: origin }, body: JSON.stringify(body) }), env);
 const sub = (ep) => ({ endpoint: ep });
 
